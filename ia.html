@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bielrealzeiro | Passe o movimento de um vídeo para uma foto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0708;--card:#161012;--line:#33262A;--tx:#F6EFEF;--mu:#A89A9D;--red:#E5322D;--redd:#3A1214}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.55 "DM Sans",system-ui,sans-serif;padding-bottom:48px}
+h1,h2{font-family:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.1}
+.w{max-width:560px;margin:auto;padding:0 18px}
+header{border-bottom:1px solid var(--line)}
+header .w{display:flex;justify-content:space-between;align-items:center;height:62px}
+.brand{font:800 21px "Bricolage Grotesque",sans-serif;text-decoration:none;color:var(--tx)}
+.brand b{color:var(--red)}
+.chip{border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-weight:600;color:var(--red)}
+h1{font-size:clamp(32px,9vw,44px);font-weight:800;margin:30px 0 10px}
+.lead{color:var(--mu)}
+.step{margin-top:30px}
+h2{font-size:22px;font-weight:600;margin-bottom:12px;display:flex;gap:10px;align-items:center}
+h2 i{font:600 15px "DM Sans";font-style:normal;width:28px;height:28px;border-radius:50%;background:var(--red);display:grid;place-items:center}
+.mod{display:block;width:100%;text-align:left;background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:10px;color:var(--tx);font:inherit;cursor:pointer}
+.mod strong{display:block;font:600 19px "Bricolage Grotesque",sans-serif}
+.mod span{color:var(--mu);font-size:14px}
+.mod[aria-pressed=true]{border-color:var(--red);background:var(--redd)}
+.up{display:block;border:1.5px dashed var(--line);border-radius:12px;padding:18px;text-align:center;margin-bottom:10px;cursor:pointer;background:var(--card)}
+.up b{display:block}
+.up small{color:var(--mu)}
+.up.ok{border-style:solid;border-color:var(--red)}
+.up input{position:absolute;opacity:0;width:1px;height:1px}
+.up:focus-within{outline:3px solid #fff;outline-offset:2px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 18px}
+.seg button{background:var(--card);border:1.5px solid var(--line);color:var(--tx);border-radius:10px;padding:13px;font:600 16px "DM Sans";cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--red);border-color:var(--red)}
+label.t{font-weight:600;display:flex;justify-content:space-between}
+label.t em{font-style:normal;color:var(--red)}
+input[type=range]{width:100%;accent-color:var(--red);margin:10px 0 18px}
+textarea{width:100%;min-height:110px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:12px;color:var(--tx);font:inherit;resize:vertical;margin-top:8px}
+.cost{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-top:24px}
+.cost .r{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.cost .big{font:800 38px "Bricolage Grotesque",sans-serif}
+.cost small{color:var(--mu)}
+.cost hr{border:0;border-top:1px solid var(--line);margin:12px 0}
+.go{width:100%;margin-top:14px;border:0;border-radius:14px;background:var(--red);color:#fff;padding:17px;font:600 18px "DM Sans";cursor:pointer}
+.go:disabled{background:#4a2326;color:#a98;cursor:not-allowed}
+#msg{margin-top:12px;min-height:24px}
+.err{color:#ff7b76}.inf{color:var(--mu)}
+.note{color:var(--mu);font-size:14px;margin-top:20px}
+#adm{display:none;margin-top:28px;border:1px dashed var(--red);border-radius:12px;padding:14px}
+#adm input{background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:8px;padding:9px;width:110px;font:inherit}
+#adm button{background:var(--red);border:0;border-radius:8px;color:#fff;padding:10px 14px;font:600 15px "DM Sans";cursor:pointer;margin-left:6px}
+:focus-visible{outline:3px solid #fff;outline-offset:2px}
+</style>
+</head>
+<body>
+<header><div class="w"><a class="brand" href="./">Bielreal<b>zeiro</b></a><div class="chip" id="saldo">0 créditos</div></div></header>
+<main class="w">
+<h1>Passe o movimento de um vídeo para uma foto</h1>
+<p class="lead">Envie uma foto e um vídeo com o movimento que você quer. A IA faz a pessoa da foto se mover igual ao vídeo.</p>
+
+<section class="step"><h2><i>1</i>Escolha o modelo</h2><div id="mods"></div></section>
+
+<section class="step"><h2><i>2</i>Envie a foto e o vídeo</h2>
+<label class="up" id="upf"><b>Adicionar foto</b><small id="nf">JPG, PNG ou WEBP, até 10 MB</small><input type="file" id="fi" accept="image/jpeg,image/png,image/webp"></label>
+<label class="up" id="upv"><b>Adicionar vídeo de movimento</b><small id="nv">MP4 ou MOV, até 100 MB</small><input type="file" id="vi" accept="video/mp4,video/quicktime"></label>
+<p class="note" style="margin-top:0">Use só fotos suas ou de pessoas que deixaram você usar a imagem delas.</p>
+</section>
+
+<section class="step"><h2><i>3</i>Ajuste o vídeo</h2>
+<label class="t">Qualidade</label><div class="seg" id="q"></div>
+<label class="t">Formato</label><div class="seg" id="f"><button data-v="16:9" aria-pressed="true">Horizontal 16:9</button><button data-v="9:16" aria-pressed="false">Vertical 9:16</button></div>
+<label class="t" for="d">Duração <em id="dv"></em></label><input type="range" id="d">
+<label class="t" for="p">Descreva o vídeo (opcional) <span style="color:var(--mu);font-weight:400" id="pc">0/2500</span></label>
+<textarea id="p" maxlength="2500" placeholder="Ex.: Uma mulher dança numa rua à noite, luzes vermelhas refletindo no chão molhado."></textarea>
+</section>
+
+<div class="cost"><div class="r"><small id="calc"></small><div class="big" id="custo">0</div></div><hr><div class="r"><span>Seu saldo</span><b id="saldo2">0 créditos</b></div></div>
+<button class="go" id="go">Gerar vídeo</button>
+<div id="msg" role="status"></div>
+<p class="note">Se a geração falhar, os créditos voltam para o seu saldo.</p>
+
+<div id="adm"><b>Painel do dono (modo teste)</b><p class="note" style="margin:6px 0 10px">Este saldo fica só neste aparelho. O saldo real, por pessoa, vem na etapa do servidor.</p>
+<input type="number" id="ac" min="1" placeholder="Créditos"><button id="ab">Adicionar saldo</button></div>
+</main>
+<script>
+/* Você define os preços. Só o Kling 3.0 em 720p (20 créditos por segundo) veio da referência; os outros valores são exemplos para trocar. */
+const MODELOS=[
+{id:"k30",nome:"Kling 3.0 Motion Control",desc:"Transfira movimentos de um vídeo. Melhor qualidade.",preco:{"720p":20,"1080p":30}},
+{id:"k26",nome:"Kling Motion Control 2.6",desc:"Controle de movimento com menor custo.",preco:{"720p":12,"1080p":18}}
+];
+const MIN=3,MAX=30;
+const $=s=>document.querySelector(s);
+const S={m:MODELOS[0],q:"720p",f:"16:9",d:5,foto:null,video:null};
+let saldo=0;
+try{saldo=parseInt(localStorage.getItem("saldo")||"0",10)||0}catch(e){}
+const fmt=n=>n+(n===1?" crédito":" créditos");
+function salvar(){try{localStorage.setItem("saldo",saldo)}catch(e){}}
+function pintar(){
+$("#saldo").textContent=fmt(saldo);$("#saldo2").textContent=fmt(saldo);
+const taxa=S.m.preco[S.q],c=taxa*S.d;
+$("#custo").textContent=c;$("#calc").textContent=S.m.nome+", "+S.q+": "+S.d+" s × "+taxa+" créditos";
+$("#dv").textContent=S.d+" segundos";$("#go").disabled=false;
+document.querySelectorAll("#mods button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.id===S.m.id));
+document.querySelectorAll("#q button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.q));
+document.querySelectorAll("#f button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.f));
+return c}
+$("#mods").innerHTML=MODELOS.map(m=>'<button class="mod" data-id="'+m.id+'" aria-pressed="false"><strong>'+m.nome+'</strong><span>'+m.desc+'</span></button>').join("");
+$("#q").innerHTML=Object.keys(MODELOS[0].preco).map(q=>'<button data-v="'+q+'" aria-pressed="false">'+q+'</button>').join("");
+const d=$("#d");d.min=MIN;d.max=MAX;d.value=S.d;
+$("#mods").onclick=e=>{const b=e.target.closest("button");if(b){S.m=MODELOS.find(m=>m.id===b.dataset.id);pintar()}};
+$("#q").onclick=e=>{const b=e.target.closest("button");if(b){S.q=b.dataset.v;pintar()}};
+$("#f").onclick=e=>{const b=e.target.closest("button");if(b){S.f=b.dataset.v;pintar()}};
+d.oninput=()=>{S.d=+d.value;pintar()};
+$("#p").oninput=e=>{$("#pc").textContent=e.target.value.length+"/2500"};
+function msg(t,c){const m=$("#msg");m.textContent=t;m.className=c}
+function arq(input,box,nome,max,tipo){
+input.onchange=()=>{const f=input.files[0];if(!f)return;
+if(f.size>max*1048576){input.value="";msg("O arquivo passa de "+max+" MB. Escolha um menor.","err");return}
+S[tipo]=f;$(box).classList.add("ok");$(nome).textContent=f.name;msg("","")}}
+arq($("#fi"),"#upf","#nf",10,"foto");arq($("#vi"),"#upv","#nv",100,"video");
+$("#go").onclick=()=>{
+const c=pintar();
+if(!S.foto)return msg("Adicione uma foto para continuar.","err");
+if(!S.video)return msg("Adicione o vídeo com o movimento para continuar.","err");
+if(c>saldo)return msg("Saldo insuficiente: este vídeo custa "+fmt(c)+" e você tem "+fmt(saldo)+". Peça uma recarga pelo WhatsApp.","err");
+msg("Tudo certo com a sua solicitação, mas o motor de IA ainda não está conectado. Nenhum crédito foi descontado.","inf")};
+if(location.hash==="#admin"){$("#adm").style.display="block"}
+$("#ab").onclick=()=>{const n=parseInt($("#ac").value,10);if(n>0){saldo+=n;salvar();$("#ac").value="";pintar()}};
+pintar();
+</script>
+</body>
+</html>
